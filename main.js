@@ -23,15 +23,15 @@ window.onload = function () {
         ctx.lineTo(x, y + r);
         ctx.arc(x + r, y + r, r, Math.PI, 1.5 * Math.PI);
     }
-    canvas.onmousemove = function(event) {
+    canvas.onmousemove = function (event) {
         Mouse.x = event.pageX;
         Mouse.y = event.pageY;
     }
-    canvas.onmousedown = function(event) {
+    canvas.onmousedown = function (event) {
         Mouse.click = true;
         Mouse.down = true;
     }
-    canvas.onmouseup = function(event) {
+    canvas.onmouseup = function (event) {
         Mouse.down = false;
     }
     Mouse = {
@@ -52,17 +52,26 @@ function resizeCanvas() {
 function main() {
     canvas.clear();
 
-    ctx.fillStyle = "black";
-    ctx.fillRect(Mouse.x, Mouse.y, 100, 100);
-
-    var button = new Button();
-    button.x = 500;
-    button.y = 500;
-    button.w = 300;
-    button.h = 100;
-    button.text = "Hello world";
-    button.draw();
-    if(button.clicked) console.log("Hello world");
+    if (page == "title page") {
+        titlePage.update();
+        titlePage.draw();
+    } else if (page == "choose multiplayer or singleplayer") {
+        chooseMultiplayerOrSingleplayerPage.update();
+        chooseMultiplayerOrSingleplayerPage.draw();
+    } else if (page == "choose topic singleplayer") {
+        chooseTopicSingleplayerPage.update();
+        chooseTopicSingleplayerPage.draw();
+    } else if (page == "choose topic multiplayer") {
+        chooseTopicMultiplayerPage.update();
+        chooseTopicMultiplayerPage.draw();
+    }
 
     Mouse.click = false;
 }
+
+let page = "title page";
+let titlePage = new TitlePage();
+let chooseMultiplayerOrSingleplayerPage = new ChooseMultiplayerOrSingleplayerPage();
+let chooseTopicSingleplayerPage = new ChooseTopicSingleplayerPage();
+let chooseTopicMultiplayerPage = new ChooseTopicMultiplayerPage();
+let game = false;
