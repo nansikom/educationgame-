@@ -64,12 +64,20 @@ function main() {
     } else if (page == "choose topic multiplayer") {
         chooseTopicMultiplayerPage.update();
         chooseTopicMultiplayerPage.draw();
+    } else if (page == "new game") {
+        game = new Game(topics, modality);
+        page = "game";
+    } else if (page == "game") {
+        game.update();
+        game.draw();
     }
 
     Mouse.click = false;
 }
 
 let page = "title page";
+let modality = false;
+let topics = [];
 let titlePage = new TitlePage();
 let chooseMultiplayerOrSingleplayerPage = new ChooseMultiplayerOrSingleplayerPage();
 let chooseTopicSingleplayerPage = new ChooseTopicSingleplayerPage();

@@ -106,11 +106,13 @@ class ChooseMultiplayerOrSingleplayerPage extends Page {
         this.multiplayerButton.x = canvas.width / 2 - this.multiplayerButton.w / 2;
         this.singleplayerButton.x = canvas.width / 2 - this.singleplayerButton.w / 2;
 
-        if(this.multiplayerButton.clicked) {
+        if (this.multiplayerButton.clicked) {
             page = "choose topic multiplayer";
+            modality = "multiplayer";
         }
-        if(this.singleplayerButton.clicked) {
+        if (this.singleplayerButton.clicked) {
             page = "choose topic singleplayer";
+            modality = "singleplayer";
         }
     }
     draw() {
@@ -132,23 +134,35 @@ class ChooseMultiplayerOrSingleplayerPage extends Page {
 class ChooseTopicSingleplayerPage extends Page {
     constructor() {
         super();
-        this.multiplayerButton = new Button();
-        this.multiplayerButton.text = "Multiplayer";
-        this.multiplayerButton.w = 350;
-        this.multiplayerButton.h = 100;
-        this.multiplayerButton.x = canvas.width / 2 - this.multiplayerButton.w / 2;
-        this.multiplayerButton.y = 300;
+        let topics = ["Math", "Science", "Trivia"];
+        this.buttons = [];
+        for (let n = 0; n < topics.length; n++) {
+            let button = new Button();
+            button.y = 200 + n * 150;
+            button.w = 300;
+            button.h = 100;
+            button.text = topics[n];
+            this.buttons.push(button);
+        }
 
-        this.singleplayerButton = new Button();
-        this.singleplayerButton.text = "Singleplayer";
-        this.singleplayerButton.w = 350;
-        this.singleplayerButton.h = 100;
-        this.singleplayerButton.x = canvas.width / 2 - this.singleplayerButton.w / 2;
-        this.singleplayerButton.y = 500;
+        this.startButton = new Button();
+        this.startButton.text = "Start";
+        this.startButton.w = 350;
+        this.startButton.h = 100;
+        this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
+        this.startButton.y = 600;
     }
     update() {
-        this.multiplayerButton.x = canvas.width / 2 - this.multiplayerButton.w / 2;
-        this.singleplayerButton.x = canvas.width / 2 - this.singleplayerButton.w / 2;
+        for (let button of this.buttons) {
+            if (button.clicked) topics[0] = button.text;
+
+            button.x = canvas.width / 2 - button.w / 2;
+        }
+
+        this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
+        if (this.startButton.clicked) {
+            page = "new game";
+        }
     }
     draw() {
         ctx.save();
@@ -161,31 +175,67 @@ class ChooseTopicSingleplayerPage extends Page {
 
         ctx.restore();
 
-        this.multiplayerButton.draw();
-        this.singleplayerButton.draw();
+        for (let button of this.buttons) {
+            button.draw();
+        }
+        this.startButton.draw();
     }
 }
 
 class ChooseTopicMultiplayerPage extends Page {
     constructor() {
         super();
-        this.multiplayerButton = new Button();
-        this.multiplayerButton.text = "Multiplayer";
-        this.multiplayerButton.w = 350;
-        this.multiplayerButton.h = 100;
-        this.multiplayerButton.x = canvas.width / 2 - this.multiplayerButton.w / 2;
-        this.multiplayerButton.y = 300;
+        let topics = ["Math", "Science", "Trivia"];
+        this.buttons = [];
+        for (let n = 0; n < topics.length; n++) {
+            let button = new Button();
+            button.y = 200 + n * 150;
+            button.w = 300;
+            button.h = 100;
+            button.player = 1;
+            button.text = topics[n];
+            this.buttons.push(button);
+        }
+        for (let n = 0; n < topics.length; n++) {
+            let button = new Button();
+            button.y = 200 + n * 150;
+            button.w = 300;
+            button.h = 100;
+            button.player = 2;
+            button.text = topics[n];
+            this.buttons.push(button);
+        }
 
-        this.singleplayerButton = new Button();
-        this.singleplayerButton.text = "Singleplayer";
-        this.singleplayerButton.w = 350;
-        this.singleplayerButton.h = 100;
-        this.singleplayerButton.x = canvas.width / 2 - this.singleplayerButton.w / 2;
-        this.singleplayerButton.y = 500;
+        this.startButton = new Button();
+        this.startButton.text = "Start";
+        this.startButton.w = 350;
+        this.startButton.h = 100;
+        this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
+        this.startButton.y = 600;
     }
     update() {
-        this.multiplayerButton.x = canvas.width / 2 - this.multiplayerButton.w / 2;
-        this.singleplayerButton.x = canvas.width / 2 - this.singleplayerButton.w / 2;
+        for (let button of this.buttons) {
+            if (button.clicked) {
+                if (button.player === 1) {
+                    topics[0] = button.text;
+                } else if (button.player === 2) {
+                    topics[1] = button.text;
+                }
+            }
+
+            let xOffset;
+            if (button.player === 1) {
+                xOffset = -200;
+            } else if (button.player === 2) {
+                xOffset = 200;
+            }
+            button.x = canvas.width / 2 - button.w / 2 + xOffset;
+        }
+
+        this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
+        if (this.startButton.clicked) {
+            page = "new game";
+        }
     }
     draw() {
         ctx.save();
@@ -198,7 +248,9 @@ class ChooseTopicMultiplayerPage extends Page {
 
         ctx.restore();
 
-        this.multiplayerButton.draw();
-        this.singleplayerButton.draw();
+        for (let button of this.buttons) {
+            button.draw();
+        }
+        this.startButton.draw();
     }
 }
