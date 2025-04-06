@@ -5,6 +5,12 @@ function easeInOut(a) {
 
 class Game {
     constructor(modality) {
+        this.questionsAnswered = {
+            "player 1": [],
+            "player 2": []
+        };
+
+        this.evaluation = false;
         this.generatedQuestions = false;
         this.modality = modality;
         this.questions = [];
@@ -109,6 +115,12 @@ class Game {
                     this.dealDamageTimer--;
                     if (this.dealDamageTimer === 1) {
                         let damage = this.currentRound.score;
+                        var question = {
+                            question: this.currentRound.prompt,
+                            answer: this.currentRound.chosenAnswer,
+                            result: this.currentRound.timeUp ? "ran out of time" : this.currentRound.answeredCorrect ? "answered correctly" : "answered incorrectly"
+                        }
+                        this.questionsAnswered[this.turn].push(question);
                         if (damage < 0) {
                             self.damage(-damage);
                         } else {
@@ -116,9 +128,17 @@ class Game {
                         }
                     }
                 }
+                if (this.currentRound.nextRound && this.player1.animationsCompleted && this.player2.animationsCompleted && !this.dealDamageTimer) {
+                    if (this.player1.health <= 0 || this.player2.health <= 0 || this.questionNumber == 4) {
+                        this.nextRoundButton.text = "View Results";
+                    } else {
+                        this.nextRoundButton.text = "Next Round";
+                    }
+                }
                 if (this.currentRound.nextRound && this.player1.animationsCompleted && this.player2.animationsCompleted && this.nextRoundButton.clicked && !this.dealDamageTimer) {
-                    if (this.player1.health <= 0 || this.player2.health <= 0) {
+                    if (this.player1.health <= 0 || this.player2.health <= 0 || this.questionNumber == 4) {
                         this.gameCompleted = true;
+                        this.requestEvaluationGeneration(this.questionsAnswered);
                     } else {
                         this.damageDealtForRound = false;
                         this.createNextRound();
@@ -136,16 +156,30 @@ class Game {
         var player1Target = { x: this.player1.originX, y: this.player1.originY };
         var player2Target = { x: this.player2.originX, y: this.player2.originY };
         if (this.turn == "player 1" && !this.showNextRoundButton) {
-            player1Target.x = canvas.width / 2 - 200;
+            player1Target.x = canvas.width / 2 - 300;
             this.player1.scale = this.player1.scale * 0.95 + 1.3 * 0.05;
         } else {
             this.player1.scale = this.player1.scale * 0.95 + 1 * 0.05;
         }
         if (this.turn == "player 2" && !this.showNextRoundButton) {
-            player2Target.x = canvas.width / 2 + 200;
+            player2Target.x = canvas.width / 2 + 300;
             this.player2.scale = this.player2.scale * 0.95 + 1.3 * 0.05;
         } else {
             this.player2.scale = this.player2.scale * 0.95 + 1 * 0.05;
+        }
+        if (this.gameCompleted) {
+            if (this.player1.health > this.player2.health) {
+                this.player1.won = true;
+                player1Target = { x: canvas.width / 2, y: 250 };
+            } else if (this.player1.health < this.player2.health) {
+                this.player2.won = true;
+                player2Target = { x: canvas.width / 2, y: 250 };
+            } else {
+                this.player1.won = true;
+                this.player2.won = true;
+                player1Target = { x: canvas.width / 2 + 50, y: 250 };
+                player2Target = { x: canvas.width / 2 - 50, y: 250 };
+            }
         }
         var p = 0.05;
 
@@ -157,8 +191,8 @@ class Game {
         this.player1.updateAnimations();
         this.player2.updateAnimations();
 
-        this.backButton.y = canvas.height - 150;
-        this.backButton.x = canvas.width / 2 - this.backButton.w / 2;
+        this.backButton.y = 50;
+        this.backButton.x = 50;
 
         this.nextRoundButton.x = canvas.width / 2 - this.nextRoundButton.w / 2;
     }
@@ -188,27 +222,26 @@ class Game {
         fetchquestions(topics[1], "player 2");
     }
     requestEvaluationGeneration(result) {
-        const fetchresult = async (topic, player) => {
-            fetch('http://127.0.0.1:5001/lessonplan',
+        const fetchresult = async (inputData) => {
+            fetch('http://127.0.0.1:5002/lessonplan',
                 {
                     method: "POST",
                     headers: {
                         'Content-Type': 'text/plain'
                     },
-                    body: result
+                    body: JSON.stringify(inputData)
                 }
             )
                 .then(response => response.text())
                 .then(data => {
-                    console.log('Reponse: ', data);
+                    console.log(data);
+                    game.evaluation = JSON.parse(data.slice(8, -4));
                 })
                 .catch(error => {
                     console.log('Error: ', error)
                 })
         }
-
-        /* Fetch the evaluation of each player here */
-
+        fetchresult(result);
     }
     addQuestionData(data, player) {
         console.log(data);
@@ -274,6 +307,9 @@ class Game {
             target = self;
         } else if (this.currentRound.answeredCorrect) {
             text = "Correct!";
+            if (this.currentRound.timeToAnswer > 800) {
+                text = "Super Fast!"
+            }
             subText = this.currentRound.score + " damage";
             target = opponent;
         } else {
@@ -312,11 +348,31 @@ class Game {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         if (this.player1.health > this.player2.health) {
-            ctx.fillText("Player 1 Wins!", 0, 400);
+            ctx.fillText(this.player1.name + " Wins!", 0, 100);
         } else if (this.player1.health < this.player2.health) {
-            ctx.fillText("Player 2 Wins!", 0, 400);
+            ctx.fillText(this.player2.name + " Wins!", 0, 100);
         } else {
-            ctx.fillText("It's a Tie!", 0, 400);
+            ctx.fillText("It's a Tie!", 0, 100);
+        }
+
+        if (!this.evaluation) {
+            ctx.font = "30px KanitLight";
+            ctx.fillText("Loading evaluation" + ".".repeat(1 + Math.floor(this.t % 150 / 50)), 0, 400);
+        } else {
+            var p1 = new Paragraph(this.player1.name + ": " + this.evaluation["player 1"]);
+            p1.x = -400;
+            p1.w = 800;
+            p1.y = 350;
+            p1.h = 150;
+            p1.calculateLines();
+            var p2 = new Paragraph(this.player2.name + ": " + this.evaluation["player 2"]);
+            p2.x = -400;
+            p2.w = 800;
+            p2.y = 550;
+            p2.h = 150;
+            p2.calculateLines();
+            p1.draw();
+            p2.draw();
         }
 
         ctx.restore();
@@ -340,6 +396,7 @@ class QuestionRound {
         this.timeToAnswer = 1000;
         this.answerButtons = [];
         this.answered = false;
+        this.chosenAnswer = null;
         this.answeredCorrect = false;
         this.answeredAnimation = 0;
         this.nextRound = false;
@@ -347,16 +404,19 @@ class QuestionRound {
         this.timeUpAnimation = 0;
         this.score = 0;
         for (let n = 0; n < answers.length; n++) {
-            let button = new Button();
+            let button = new QuizButton();
+            if (this.correctAnswer === answers[n]) button.correct = true;
             button.text = answers[n];
             button.font = "30px KanitLight";
-            button.yOffset = 100 + n * 100;
+            button.yOffset = 130 + n * 100;
             button.y = button.yOffset + this.y;
             button.w = 800;
             button.h = 80;
             button.x = canvas.width / 2 - button.w / 2 + this.x;
             this.answerButtons.push(button);
         }
+
+        this.paragraph = new Paragraph(this.prompt);
 
         this.startAnimation = 450;
         // this.startAnimation = 0;
@@ -381,14 +441,20 @@ class QuestionRound {
                         if (button.text === this.correctAnswer) {
                             this.answeredCorrect = true;
                             this.score = 20;
+                            if (this.timeToAnswer > 800) this.score = 30;
                         } else {
-                            this.score = -20;
+                            this.score = -10;
                         }
+                        this.chosenAnswer = button.text;
                     }
                 }
                 if (this.timeToAnswer === 0) {
                     this.timeUp = true;
-                    this.score = -20;
+                    this.score = -10;
+                } else {
+                    for (let button of this.answerButtons) {
+                        button.update();
+                    }
                 }
             }
         }
@@ -403,17 +469,23 @@ class QuestionRound {
             button.x = canvas.width / 2 - button.w / 2 + this.x;
             button.y = button.yOffset + this.y;
         }
+
+        this.paragraph.x = canvas.width / 2 - 400;
+        this.paragraph.y = this.y;
+        this.paragraph.w = 800;
+        this.paragraph.h = 130;
+        this.paragraph.calculateLines();
     }
     drawBackground() {
         if (this.answeredAnimation) {
             ctx.save();
-            ctx.globalAlpha = easeInOut(this.answeredAnimation / 10);
+            ctx.globalAlpha = 1 - easeInOut(this.answeredAnimation / 100);
             if (this.answeredCorrect) {
-                ctx.fillStyle = "lime";
+                ctx.fillStyle = "rgb(200,255,200)";
             } else {
-                ctx.fillStyle = "red";
+                ctx.fillStyle = "rgb(255,200,200)";
             }
-            ctx.fillRect(0, 0, this.w, this.h);
+            ctx.fillRect(0, -this.h, this.w, this.h * 2);
             ctx.restore();
         }
     }
@@ -438,21 +510,12 @@ class QuestionRound {
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
         ctx.save();
-        ctx.translate(50, this.h - 50);
+        ctx.translate(40, this.h - 40);
         ctx.fillText(`Time Left: ${Math.floor(this.timeToAnswer / 100)}s`, 0, 0);
         ctx.restore();
     }
     drawQuestion() {
-        ctx.save();
-        ctx.translate(this.x + canvas.width / 2, this.y);
-
-        ctx.font = "30px KanitLight";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "black";
-        ctx.fillText(this.prompt, 0, 50);
-
-        ctx.restore();
+        this.paragraph.draw();
 
         for (let button of this.answerButtons) {
             button.draw();
@@ -463,7 +526,7 @@ class QuestionRound {
         ctx.translate(canvas.width / 2, 0);
 
         ctx.fillStyle = "black";
-        ctx.font = "60px KanitBold";
+        ctx.font = "100px KanitBold";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         if (this.startAnimation > 300) {
@@ -514,12 +577,32 @@ class QuestionRound {
 
 class AIRound {
     constructor() {
+        this.w = canvas.width;
+        this.h = 500;
+        this.x = 0;
+        this.y = canvas.height - this.h;
+
+        this.player = "player 2";
+        this.timeToAnswer = 1000;
         this.answered = true;
+        this.answeredCorrect = true;
         this.answeredAnimation = 0;
         this.nextRound = true;
+        this.timeUp = false;
+        this.timeUpAnimation = 0;
+        this.score = 10;
+        this.startAnimation = 0;
     }
     update() {
-
+        this.answeredAnimation++;
+        if (this.answeredAnimation == 100) {
+            this.nextRound = true;
+        }
+        this.updatePosition();
+    }
+    updatePosition() {
+        this.y = canvas.height - this.h;
+        this.w = canvas.width;
     }
     draw() {
 
@@ -536,9 +619,10 @@ class Player {
         this.damageAnimation = 0;
         this.name = "Unnamed Player";
         this.animationsCompleted = true;
+        this.won = false;
     }
     get healthPercent() {
-        return this.health / this.maxHealth;
+        return Math.max(Math.min(1, this.health / this.maxHealth), 0);
     }
     updateAnimations() {
         this.animationsCompleted = true;
@@ -569,6 +653,10 @@ class Player {
     drawSprite() {
         ctx.fillStyle = "blue";
         ctx.fillRect(-40, -40, 80, 80);
+
+        if (this.won) {
+            ctx.drawImage(document.getElementById("crown-image"), -40, -110, 80, 80);
+        }
     }
     drawHealth() {
         ctx.fillStyle = "black";

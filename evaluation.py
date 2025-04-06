@@ -14,28 +14,19 @@ def generate_evaluation(result):
     
     prompt = f"""
     
-    This is the result of some questions that were asked in this topic.
-    Results = {result}
+    2 players were asked some questions, here is the result of the tests in JSON format:
+    {result}
     
-    Generate a lesson plan of what areas in this subject that this individual should study 
-    more based on the answers that they got right and wrong.
+    Generate feedback for each player on what they're strengths are and what they should work on.
+    Keep this feedback relatively short, 30 words or less.
     
+    Return the following in JSON:
+    {{
+        "player 1": "feedback for player 1"
+        "player 2": "feedback for player 2"
+    }}
     
-    Formatting Example:
-        {{You got n number of questions wrong and n number of questions right.
-            Here is a list of areas that you need to work on:
-            a) "Dot Product"
-            b) "Cross Product"
-            c) "Vector addition"
-            
-            Here is your lesson plan and additional questions to test yourself:
-            
-            a) "Qn", "answer"
-            b) "Qn", "answer"
-            c) "Qn", "answer"
-        }}
-    
-    Return only text output with explanation focusing more on personalizing it for them.
+    Return only JSON output with no other text.
     """
     
     
@@ -58,4 +49,4 @@ def lessonplan():
     return raw_data
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5002)
