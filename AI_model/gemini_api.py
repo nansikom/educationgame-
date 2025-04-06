@@ -4,8 +4,9 @@ import collections
 import re
 import csv
 import json
+from flask import Flask, request, jsonify
 
-
+app = Flask(__name__)
 def generate_response(subject):
     
     prompt = f"""
@@ -37,7 +38,9 @@ def generate_response(subject):
     response = client.models.generate_content(
     model="gemini-2.0-flash", contents= prompt
     )
-    return (response.text)
+    print(type(response))
+    return response
+
     
 # function that corrects the styling format for saving the json file
 def strip_json_data(data):
@@ -51,7 +54,7 @@ def strip_json_data(data):
     return data
         
 # function that gets the subject and throwws in the well formatted data to a json file saved in  a dictionary format
-def convert_to_json_data(subject):
+def convert_to_json_file(subject):
     # call function that returns the subject
     raw_data = generate_response(subject="math")
     # strip the formatted data  from the ai
@@ -60,13 +63,32 @@ def convert_to_json_data(subject):
     # load the json data 
     data = json.loads(raw_data_stripped)
     # throw it in datasource.json
-    return data
+    with open("data_source.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
         
 
-subject = "math"
-convert_to_json_data(subject)
+@app.route ('/generate', methods = ['POST'])
+def generate():
+    # get the subject based on the request
+    data = request.get_json()
+    subject = data.get('subject')
 
+
+    raw_data  = generate_response(subject)
+    raw_data = raw_data.text.strip()
+
+    # Remove code block formatting if present
+    if raw_data.startswith("```"):
+        raw_data = "\n".join(raw_data.splitlines()[1:-1])
+        
+    print(raw_data)
+    questions = json.loads(raw_data)
     
-    
-
-
+    # print(raw_data, questions)
+    try:
+        # questions = json.loads(raw_data)
+        return jsonify(questions), 200
+    except json.JSONDecodeError:
+        return jsonify({"error": "Failed to decode JSON response"}), 500
+if __name__ == '__main__':
+    app.run(debug=True)
