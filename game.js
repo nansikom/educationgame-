@@ -31,9 +31,17 @@ class Game {
         this.backButton.y = canvas.height - 150;
 
         this.player1 = new Player();
-        this.player1.name = "Player 1";
+        this.player1.name = playerNames[0];
         this.player2 = new Player();
-        this.player2.name = "Player 2";
+        this.player2.name = playerNames[1];
+        this.player1.originX = 100;
+        this.player1.originY = 100;
+        this.player2.originX = canvas.width - 100;
+        this.player2.originY = 100;
+        this.player1.x = this.player1.originX;
+        this.player1.y = this.player1.originY;
+        this.player2.x = this.player2.originX;
+        this.player2.y = this.player2.originY;
     }
     createNextRound() {
         if (this.questionNumber === false) this.questionNumber = 0;
@@ -120,10 +128,31 @@ class Game {
         }
     }
     updateEffects() {
-        this.player1.x = 60;
-        this.player1.y = 50;
-        this.player2.x = canvas.width - 60;
-        this.player2.y = 50;
+        this.player1.originX = 100;
+        this.player1.originY = 100;
+        this.player2.originX = canvas.width - 100;
+        this.player2.originY = 100;
+
+        var player1Target = { x: this.player1.originX, y: this.player1.originY };
+        var player2Target = { x: this.player2.originX, y: this.player2.originY };
+        if (this.turn == "player 1" && !this.showNextRoundButton) {
+            player1Target.x = canvas.width / 2 - 200;
+            this.player1.scale = this.player1.scale * 0.95 + 1.3 * 0.05;
+        } else {
+            this.player1.scale = this.player1.scale * 0.95 + 1 * 0.05;
+        }
+        if (this.turn == "player 2" && !this.showNextRoundButton) {
+            player2Target.x = canvas.width / 2 + 200;
+            this.player2.scale = this.player2.scale * 0.95 + 1.3 * 0.05;
+        } else {
+            this.player2.scale = this.player2.scale * 0.95 + 1 * 0.05;
+        }
+        var p = 0.05;
+
+        this.player1.x = this.player1.x * (1 - p) + player1Target.x * p;
+        this.player1.y = this.player1.y * (1 - p) + player1Target.y * p;
+        this.player2.x = this.player2.x * (1 - p) + player2Target.x * p;
+        this.player2.y = this.player2.y * (1 - p) + player2Target.y * p;
 
         this.player1.updateAnimations();
         this.player2.updateAnimations();
@@ -158,6 +187,29 @@ class Game {
         fetchquestions(topics[0], "player 1");
         fetchquestions(topics[1], "player 2");
     }
+    requestEvaluationGeneration(result) {
+        const fetchresult = async (topic, player) => {
+            fetch('http://127.0.0.1:5001/lessonplan',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: result
+                }
+            )
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Reponse: ', data);
+                })
+                .catch(error => {
+                    console.log('Error: ', error)
+                })
+        }
+
+        /* Fetch the evaluation of each player here */
+
+    }
     addQuestionData(data, player) {
         console.log(data);
         data = data.map(function (e) {
@@ -189,6 +241,9 @@ class Game {
             }
             if (this.currentRound.nextRound && this.player1.animationsCompleted && this.player2.animationsCompleted && !this.dealDamageTimer && this.damageDealtForRound) {
                 this.nextRoundButton.draw();
+                this.showNextRoundButton = true;
+            } else {
+                this.showNextRoundButton = false;
             }
         } else {
             this.drawLoadingQuestions();
@@ -230,18 +285,18 @@ class Game {
         let x = (canvas.width / 2) * (1 - a) + target.x * a;
         let y = 100 * (1 - a) + target.y * a;
         ctx.fillStyle = "black";
-        ctx.font = "50px Arial";
+        ctx.font = "50px KanitLight";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(text, x, y);
-        ctx.font = "30px Arial";
+        ctx.font = "30px KanitLight";
         ctx.fillText(subText, x, y + 50);
     }
     drawLoadingQuestions() {
         ctx.save();
         ctx.translate(canvas.width / 2, 0);
 
-        ctx.font = "60px Arial";
+        ctx.font = "60px KanitLight";
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         var w = ctx.measureText("Generating...").width;
@@ -253,7 +308,7 @@ class Game {
         ctx.save();
         ctx.translate(canvas.width / 2, 0);
 
-        ctx.font = "60px Arial";
+        ctx.font = "60px KanitLight";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         if (this.player1.health > this.player2.health) {
@@ -294,7 +349,7 @@ class QuestionRound {
         for (let n = 0; n < answers.length; n++) {
             let button = new Button();
             button.text = answers[n];
-            button.font = "30px Arial";
+            button.font = "30px KanitLight";
             button.yOffset = 100 + n * 100;
             button.y = button.yOffset + this.y;
             button.w = 800;
@@ -304,7 +359,7 @@ class QuestionRound {
         }
 
         this.startAnimation = 450;
-        this.startAnimation = 0;
+        // this.startAnimation = 0;
     }
     update() {
         if (this.startAnimation <= 0) {
@@ -370,7 +425,7 @@ class QuestionRound {
         ctx.fillRect(this.x, this.y + this.h / 3 - 10, this.w, this.h / 3 + 20);
         ctx.fillStyle = "rgb(255,200,200)";
         ctx.fillRect(this.x, this.y + this.h / 3, this.w, this.h / 3);
-        ctx.font = "60px Arial";
+        ctx.font = "60px KanitLight";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
@@ -378,7 +433,7 @@ class QuestionRound {
         ctx.restore();
     }
     drawTimeLeft() {
-        ctx.font = "30px Arial";
+        ctx.font = "30px KanitLight";
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
@@ -391,7 +446,7 @@ class QuestionRound {
         ctx.save();
         ctx.translate(this.x + canvas.width / 2, this.y);
 
-        ctx.font = "30px Arial";
+        ctx.font = "30px KanitLight";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
@@ -408,7 +463,7 @@ class QuestionRound {
         ctx.translate(canvas.width / 2, 0);
 
         ctx.fillStyle = "black";
-        ctx.font = "60px Arial";
+        ctx.font = "60px KanitBold";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         if (this.startAnimation > 300) {
@@ -523,7 +578,7 @@ class Player {
     }
     drawName() {
         ctx.fillStyle = "black";
-        ctx.font = "20px Arial";
+        ctx.font = "20px KanitLight";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.name, 0, 80);
