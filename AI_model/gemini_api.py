@@ -64,9 +64,6 @@ def convert_to_json_file(subject):
         json.dump(data, f, indent=4)
         
 
-
-
-
 subject = "math"
 convert_to_json_file(subject)
 
