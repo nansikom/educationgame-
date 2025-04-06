@@ -4,6 +4,12 @@ import collections
 import re
 import csv
 import json
+from flask import Flask, request, jsonify
+
+
+# define th flask app
+app = Flask(__name__)
+
 
 
 def generate_response(subject):
@@ -67,7 +73,5 @@ def convert_to_json_file(subject):
 subject = "math"
 convert_to_json_file(subject)
 
-    
-    
 
 
