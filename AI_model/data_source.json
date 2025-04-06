@@ -1,0 +1,52 @@
+[
+    {
+        "What is the value of pi (\u03c0) to two decimal places?": {
+            "choices": [
+                "a. 3.14",
+                "b. 3.16",
+                "c. 3.12"
+            ],
+            "answer": "a"
+        }
+    },
+    {
+        "What is the square root of 144?": {
+            "choices": [
+                "a. 10",
+                "b. 12",
+                "c. 14"
+            ],
+            "answer": "b"
+        }
+    },
+    {
+        "Solve for x: 2x + 5 = 11": {
+            "choices": [
+                "a. 3",
+                "b. 6",
+                "c. 8"
+            ],
+            "answer": "a"
+        }
+    },
+    {
+        "What is the area of a rectangle with length 8 and width 5?": {
+            "choices": [
+                "a. 13",
+                "b. 26",
+                "c. 40"
+            ],
+            "answer": "c"
+        }
+    },
+    {
+        "What is 15% of 200?": {
+            "choices": [
+                "a. 15",
+                "b. 30",
+                "c. 45"
+            ],
+            "answer": "b"
+        }
+    }
+]

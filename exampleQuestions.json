@@ -1,0 +1,52 @@
+exampleQuestions = [
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    },
+    {
+        "prompt": "What is the capital of the United States?",
+        "answers": ["Washington DC", "New York", "London"],
+        "correctAnswer": "Washington DC"
+    }
+]

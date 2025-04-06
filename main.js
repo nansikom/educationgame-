@@ -52,30 +52,88 @@ function resizeCanvas() {
 function main() {
     canvas.clear();
 
-    if (page == "title page") {
-        titlePage.update();
-        titlePage.draw();
-    } else if (page == "choose multiplayer or singleplayer") {
-        chooseMultiplayerOrSingleplayerPage.update();
-        chooseMultiplayerOrSingleplayerPage.draw();
-    } else if (page == "choose topic singleplayer") {
-        chooseTopicSingleplayerPage.update();
-        chooseTopicSingleplayerPage.draw();
-    } else if (page == "choose topic multiplayer") {
-        chooseTopicMultiplayerPage.update();
-        chooseTopicMultiplayerPage.draw();
-    } else if (page == "new game") {
+    if (targetPage == "new game") {
+        targetPage = "game";
         game = new Game(topics, modality);
-        page = "game";
-    } else if (page == "game") {
-        game.update();
-        game.draw();
+    }
+    if (targetPage != page) {
+        pageTransition++;
+        if (pageTransition == 30) {
+            pageTransition = 0;
+            page = targetPage;
+            pageTransitionBackwards = false;
+        }
+        updatePageEffects(page);
+        updatePageEffects(targetPage);
+        ctx.save();
+        var a = easeInOut(pageTransition / 30);
+        if(pageTransitionBackwards) {
+            ctx.translate(0, canvas.height * a);
+        } else {
+            ctx.translate(0, -canvas.height * a);
+        }
+        drawPage(page);
+        if(pageTransitionBackwards) {
+            ctx.translate(0, -canvas.height);
+        } else {
+            ctx.translate(0, canvas.height);
+        }
+        drawPage(targetPage);
+        ctx.restore();
+    } else {
+        updatePage(page);
+        drawPage(page);
     }
 
     Mouse.click = false;
 }
 
+function drawPage(p) {
+    if (p == "title page") {
+        titlePage.draw();
+    } else if (p == "choose multiplayer or singleplayer") {
+        chooseMultiplayerOrSingleplayerPage.draw();
+    } else if (p == "choose topic singleplayer") {
+        chooseTopicSingleplayerPage.draw();
+    } else if (p == "choose topic multiplayer") {
+        chooseTopicMultiplayerPage.draw();
+    } else if (p == "game") {
+        game.draw();
+    }
+}
+
+function updatePageEffects(p) {
+    if (p == "title page") {
+        titlePage.updateEffects();
+    } else if (p == "choose multiplayer or singleplayer") {
+        chooseMultiplayerOrSingleplayerPage.updateEffects();
+    } else if (p == "choose topic singleplayer") {
+        chooseTopicSingleplayerPage.updateEffects();
+    } else if (p == "choose topic multiplayer") {
+        chooseTopicMultiplayerPage.updateEffects();
+    } else if (p == "game") {
+        game.updateEffects();
+    }
+}
+
+function updatePage(p) {
+    if (p == "title page") {
+        titlePage.update();
+    } else if (p == "choose multiplayer or singleplayer") {
+        chooseMultiplayerOrSingleplayerPage.update();
+    } else if (p == "choose topic singleplayer") {
+        chooseTopicSingleplayerPage.update();
+    } else if (p == "choose topic multiplayer") {
+        chooseTopicMultiplayerPage.update();
+    } else if (p == "game") {
+        game.update();
+    }
+}
+
 let page = "title page";
+let targetPage = "title page";
+let pageTransition = 0;
+let pageTransitionBackwards = false;
 let modality = false;
 let topics = [];
 let titlePage = new TitlePage();

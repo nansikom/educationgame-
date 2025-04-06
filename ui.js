@@ -47,6 +47,8 @@ class Button {
 class Page {
     constructor() {
     }
+    updateEffects() {
+    }
     update() {
     }
     draw() {
@@ -63,11 +65,13 @@ class TitlePage extends Page {
         this.playButton.x = canvas.width / 2 - this.playButton.w / 2;
         this.playButton.y = 300;
     }
-    update() {
+    updateEffects() {
         this.playButton.x = canvas.width / 2 - this.playButton.w / 2;
-
+    }
+    update() {
+        this.updateEffects();
         if (this.playButton.clicked) {
-            page = "choose multiplayer or singleplayer";
+            targetPage = "choose multiplayer or singleplayer";
         }
     }
     draw() {
@@ -102,16 +106,18 @@ class ChooseMultiplayerOrSingleplayerPage extends Page {
         this.singleplayerButton.x = canvas.width / 2 - this.singleplayerButton.w / 2;
         this.singleplayerButton.y = 500;
     }
-    update() {
+    updateEffects() {
         this.multiplayerButton.x = canvas.width / 2 - this.multiplayerButton.w / 2;
         this.singleplayerButton.x = canvas.width / 2 - this.singleplayerButton.w / 2;
-
+    }
+    update() {
+        this.updateEffects();
         if (this.multiplayerButton.clicked) {
-            page = "choose topic multiplayer";
+            targetPage = "choose topic multiplayer";
             modality = "multiplayer";
         }
         if (this.singleplayerButton.clicked) {
-            page = "choose topic singleplayer";
+            targetPage = "choose topic singleplayer";
             modality = "singleplayer";
         }
     }
@@ -152,16 +158,21 @@ class ChooseTopicSingleplayerPage extends Page {
         this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
         this.startButton.y = 600;
     }
-    update() {
+    updateEffects() {
         for (let button of this.buttons) {
-            if (button.clicked) topics[0] = button.text;
-
             button.x = canvas.width / 2 - button.w / 2;
         }
 
         this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
+    }
+    update() {
+        this.updateEffects();
+        for (let button of this.buttons) {
+            if (button.clicked) topics[0] = button.text;
+        }
+
         if (this.startButton.clicked) {
-            page = "new game";
+            targetPage = "new game";
         }
     }
     draw() {
@@ -213,7 +224,20 @@ class ChooseTopicMultiplayerPage extends Page {
         this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
         this.startButton.y = 600;
     }
+    updateEffects() {
+        for (let button of this.buttons) {
+            let xOffset;
+            if (button.player === 1) {
+                xOffset = -200;
+            } else if (button.player === 2) {
+                xOffset = 200;
+            }
+            button.x = canvas.width / 2 - button.w / 2 + xOffset;
+        }
+        this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
+    }
     update() {
+        this.updateEffects();
         for (let button of this.buttons) {
             if (button.clicked) {
                 if (button.player === 1) {
@@ -223,18 +247,10 @@ class ChooseTopicMultiplayerPage extends Page {
                 }
             }
 
-            let xOffset;
-            if (button.player === 1) {
-                xOffset = -200;
-            } else if (button.player === 2) {
-                xOffset = 200;
-            }
-            button.x = canvas.width / 2 - button.w / 2 + xOffset;
         }
 
-        this.startButton.x = canvas.width / 2 - this.startButton.w / 2;
         if (this.startButton.clicked) {
-            page = "new game";
+            targetPage = "new game";
         }
     }
     draw() {
