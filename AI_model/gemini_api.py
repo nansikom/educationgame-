@@ -51,7 +51,7 @@ def strip_json_data(data):
     return data
         
 # function that gets the subject and throwws in the well formatted data to a json file saved in  a dictionary format
-def convert_to_json_file(subject):
+def convert_to_json_data(subject):
     # call function that returns the subject
     raw_data = generate_response(subject="math")
     # strip the formatted data  from the ai
@@ -60,12 +60,11 @@ def convert_to_json_file(subject):
     # load the json data 
     data = json.loads(raw_data_stripped)
     # throw it in datasource.json
-    with open("data_source.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4)
+    return data
         
 
 subject = "math"
-convert_to_json_file(subject)
+convert_to_json_data(subject)
 
     
     
