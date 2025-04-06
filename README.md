@@ -10,11 +10,11 @@ gameplay and feedback.
 
 The project starts here, displaying the name of the game and start button
 
-[Start Screen](/image/start.png)
+![Start Screen](/image/start.png)
 
 Then asks the user if it is a single 
 player or multiplayer(2 players).
 
-[Page 2]()
+![Page 2](/image/singleormult.png)
 
 Depending on the user's answer 
