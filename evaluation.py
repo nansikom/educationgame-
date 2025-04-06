@@ -5,8 +5,11 @@ import re
 import csv
 import json
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app, origins=["null"])
 def generate_evaluation(result):
     
     prompt = f"""
@@ -14,15 +17,27 @@ def generate_evaluation(result):
     This is the result of some questions that were asked in this topic.
     Results = {result}
     
-    Generate an evaluation of what subjects that this individual should study 
+    Generate a lesson plan of what areas in this subject that this individual should study 
     more based on the answers that they got right and wrong.
     
     
     Formatting Example:
-        
+        {{You got n number of questions wrong and n number of questions right.
+            Here is a list of areas that you need to work on:
+            a) "Dot Product"
+            b) "Cross Product"
+            c) "Vector addition"
+            
+            Here is your lesson plan and additional questions to test yourself:
+            
+            a) "Qn", "answer"
+            b) "Qn", "answer"
+            c) "Qn", "answer"
+        }}
     
-    Return only json output without explanation.
+    Return only text output with explanation focusing more on personalizing it for them.
     """
+    
     
     client = genai.Client(api_key="AIzaSyDf987k_HpOVlnpddR3-Z4Ybxr8nP5cB0w") 
 
@@ -30,56 +45,17 @@ def generate_evaluation(result):
     model="gemini-2.0-flash", contents= prompt
     )
     print(type(response))
-    return (response)
+    return (response.text)
 
     
-# function that corrects the styling format for saving the json file
-def strip_json_data(data):
-    # remove the the style that starts with backtics and json or backticks as it kills how the file is saved
-    if data.startswith("```json") or data.startswith("```"):
-        # replace ` with  space 
-        data = data.strip("`").strip()
-        columns= data.splitlines()
-        #remove the first and last line of (```json and ```)
-        return"\n".join(columns[1:-1])
-    return data
-        
-# function that gets the subject and throwws in the well formatted data to a json file saved in  a dictionary format
-def convert_to_json_file(subject):
-    # call function that returns the subject
-    raw_data = generate_evaluation(evalutation="math")
-    # strip the formatted data  from the ai
-    raw_data_stripped = strip_json_data(raw_data)
-    print(f"RAW DATA:\n{raw_data_stripped!r}")
-    # load the json data 
-    data = json.loads(raw_data_stripped)
-    # throw it in datasource.json
-    with open("data_source.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4)
-        
 
-@app.route ('/generate', methods = ['POST'])
-def generate():
-    # get the subject based on the request
-    data = request.get_json()
-    subject = data.get('subject')
+@app.route ('/lessonplan', methods = ['POST'])
 
 
-    raw_data  = generate_response(subject)
-    raw_data = raw_data.text.strip()
+def lessonplan():
+    result = request.data.decode("utf-8")
+    raw_data  = generate_evaluation(result)
+    return raw_data
 
-    # Remove code block formatting if present
-    if raw_data.startswith("```"):
-        raw_data = "\n".join(raw_data.splitlines()[1:-1])
-        
-    print(raw_data)
-    questions = json.loads(raw_data)
-    
-    # print(raw_data, questions)
-    try:
-        # questions = json.loads(raw_data)
-        return jsonify(questions), 200
-    except json.JSONDecodeError:
-        return jsonify({"error": "Failed to decode JSON response"}), 500
 if __name__ == '__main__':
     app.run(debug=True)

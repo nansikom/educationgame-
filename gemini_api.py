@@ -18,8 +18,8 @@ def generate_response(subject):
     2. Select the answers from the choices
     3. Format the response as JSON array of objects:
         a. "question"
-        b. "choices": {"a", "b", "c"}
-        c. "answers": "a" or "b" or "c"
+        b. "choices": {"", "", ""}
+        c. "answers": "" or "" or ""
     
     
     Formatting Example:
