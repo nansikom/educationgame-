@@ -29,9 +29,11 @@ something wrong, their health points are impacted -20points)
 and given feedback and a personalized lesson. 
 
 For running the .py files:
-(python gemini_api.py)
-- This uses port = 5001 
-(python gemini_api.py)
+
+python gemini_api.py
+- This uses port = 5001
+
+python evaluation.py
 - This uses port = 50002
 
 
