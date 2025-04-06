@@ -4,8 +4,9 @@ import collections
 import re
 import csv
 import json
+from flask import Flask, request, jsonify
 
-
+app = Flask(__name__)
 def generate_response(subject):
     
     prompt = f"""
@@ -66,6 +67,26 @@ def convert_to_json_file(subject):
 
 subject = "math"
 convert_to_json_file(subject)
+app.route ('/generate', methods = ['POST'])
+def generate():
+    # get the subject based on the request
+    data = request.get_json()
+    subject = data.get('subject')
+
+
+    raw_data = generate_response(subject)
+    raw_data_stripped = strip_json_data(raw_data)
+    try:
+        questions = json.loads(raw_data_stripped)
+        return jsonify(questions), 200
+    except json.JSONDecodeError:
+        return jsonify({"error": "Failed to decode JSON response"}), 500
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
 
     
     

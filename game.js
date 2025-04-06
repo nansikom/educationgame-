@@ -95,8 +95,24 @@ class Game {
         this.backButton.x = canvas.width / 2 - this.backButton.w / 2;
     }
     requestQuestionGeneration(topcis) {
-        console.log("requested question generation: " + topics.toString());
+        const fetchquestions = async () => {
+            const subject = document .getElementById("topics").value;
+            const response  = await fetch('http://localhost:5000/generate',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({subject})
+            });
+
+            
+            const data = await response.json();
+            console.log(data);
+
+        }
+        fetchquestions();
     }
+
     tickQuestionGeneration() {
         if (this.t > 100) {
             this.generatedQuestions = true;
@@ -113,6 +129,7 @@ class Game {
             }
         }
     }
+    
     draw() {
         if (this.gameCompleted) {
             this.drawGameComplete();
