@@ -4,11 +4,10 @@ function easeInOut(a) {
 }
 
 class Game {
-    constructor(topics, modality) {
+    constructor(modality) {
         this.generatedQuestions = false;
         this.modality = modality;
         this.questions = [];
-        this.requestQuestionGeneration(topics);
         this.t = 0;
         this.turn = false;
         this.questionNumber = false;
@@ -135,38 +134,41 @@ class Game {
         this.nextRoundButton.x = canvas.width / 2 - this.nextRoundButton.w / 2;
     }
     requestQuestionGeneration(topics) {
-        const fetchquestions = async () => {
-            const subject = document .getElementById("topics").value;
-            const response  = await fetch('http://localhost:5000/generate',{
+        this.questions = [];
+        const fetchquestions = async (topic, player) => {
+            const response = await fetch('http://localhost:3000/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({subject})
+                body: JSON.stringify({ subject: topic })
             });
 
-            
-            const data = await response.json();
-            console.log(data);
 
+            const data = await response.json();
+            game.addQuestionData(data, player);
         }
-        fetchquestions();
+        fetchquestions(topics[0], "player 1");
+        fetchquestions(topics[1], "player 2");
+    }
+    addQuestionData(data, player) {
+        data = JSON.parse(data.slice(8, -4));
+        data = data.map(function (e) {
+            return {
+                prompt: e.question,
+                answers: Object.keys(e.choices).map(f => e.choices[f]),
+                correctAnswer: e.choices[e.answer]
+            }
+        });
+        for (let n = 0; n < data.length; n++) {
+            let q = data[n];
+            q.player = player;
+            q.questionNumber = n;
+            this.questions.push(q);
+        }
+        if (this.questions.length == 10) this.generatedQuestions = true;
     }
     tickQuestionGeneration() {
-        if (this.t > 1) {
-            this.generatedQuestions = true;
-            this.questions = [];
-            for (let n = 0; n < 10; n++) {
-                let example = exampleQuestions[n];
-                this.questions.push({
-                    prompt: example.prompt,
-                    answers: example.answers,
-                    correctAnswer: example.correctAnswer,
-                    player: "player " + (n % 2 + 1),
-                    questionNumber: Math.floor(n / 2)
-                });
-            }
-        }
     }
     draw() {
         if (this.gameCompleted) {

@@ -54,7 +54,8 @@ function main() {
 
     if (targetPage == "new game") {
         targetPage = "game";
-        game = new Game(topics, modality);
+        game = new Game(modality);
+        game.requestQuestionGeneration(topics);
     }
     if (targetPage != page) {
         pageTransition++;
