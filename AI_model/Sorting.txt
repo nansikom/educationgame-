@@ -1,34 +1,29 @@
-Find the derivative of f(x) = 3x^2 + 2x - 1.
-a) 3x + 2
-b) 6x + 2
-c) x^3 + x^2 - x
+1.  What is the derivative of f(x) = x³ + 2x² - 5x + 1?
+    a) 3x² + 4x - 5
+    b) x² + x - 5
+    c) 3x² + 4x + 5
+    Answer: a) 3x² + 4x - 5
 
-b) 6x + 2
+2.  If y = sin(2x), what is dy/dx?
+    a) cos(2x)
+    b) 2cos(2x)
+    c) -2cos(2x)
+    Answer: b) 2cos(2x)
 
-What is the slope of the tangent line to the curve y = x^3 at x = 2?
-a) 6
-b) 8
-c) 12
+3.  What is the derivative of f(x) = ln(x² + 1)?
+    a) 1/(x² + 1)
+    b) 2x/(x² + 1)
+    c) 2x * ln(x² + 1)
+    Answer: b) 2x/(x² + 1)
 
-c) 12
+4.  Find the critical points of the function f(x) = x³ - 3x² + 2.
+    a) x = 0, x = 1
+    b) x = 0, x = 2
+    c) x = -1, x = 1
+    Answer: b) x = 0, x = 2
 
-Find the critical points of the function f(x) = x^3 - 3x.
-a) x = 1, x = -1
-b) x = 0, x = 1
-c) x = -3, x = 0
-
-a) x = 1, x = -1
-
-What is the second derivative of f(x) = sin(x)?
-a) cos(x)
-b) -sin(x)
-c) -cos(x)
-
-b) -sin(x)
-
-A particle's position is given by s(t) = t^2 - 4t + 3. At what time is the particle's velocity equal to zero?
-a) t = 1
-b) t = 2
-c) t = 3
-
-b) t = 2
+5.  What is the slope of the tangent line to the curve y = x² - 4x + 3 at x = 1?
+    a) -2
+    b) 2
+    c) 0
+    Answer: a) -2

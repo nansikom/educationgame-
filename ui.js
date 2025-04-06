@@ -138,7 +138,7 @@ class ChooseTopicSingleplayerPage extends Page {
         this.buttons = [];
         for (let n = 0; n < topics.length; n++) {
             let button = new Button();
-            button.y = 200 + n * 150;
+            button.y = 200 + n * 125;
             button.w = 300;
             button.h = 100;
             button.text = topics[n];
@@ -189,7 +189,7 @@ class ChooseTopicMultiplayerPage extends Page {
         this.buttons = [];
         for (let n = 0; n < topics.length; n++) {
             let button = new Button();
-            button.y = 200 + n * 150;
+            button.y = 200 + n * 125;
             button.w = 300;
             button.h = 100;
             button.player = 1;
@@ -198,7 +198,7 @@ class ChooseTopicMultiplayerPage extends Page {
         }
         for (let n = 0; n < topics.length; n++) {
             let button = new Button();
-            button.y = 200 + n * 150;
+            button.y = 200 + n * 125;
             button.w = 300;
             button.h = 100;
             button.player = 2;
