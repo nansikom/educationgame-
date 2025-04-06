@@ -94,8 +94,25 @@ class Game {
         this.backButton.y = canvas.height - 150;
         this.backButton.x = canvas.width / 2 - this.backButton.w / 2;
     }
-    requestQuestionGeneration(topcis) {
+    requestQuestionGeneration(topics) {
+        fetch('http://127.0.0.1:5000/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ subject: topics })  // Must be a string!
+        })
+        .then(response => response.json())   // Parse JSON from response
+        .then(data => {
+            console.log(data);                // Use your JSON data here
+            console.log(data.username);      // Access specific values
+        })
+        .catch(error => {
+            console.error('Error:', error);  // Handle errors
+        });
+
         console.log("requested question generation: " + topics.toString());
+
     }
     tickQuestionGeneration() {
         if (this.t > 100) {
