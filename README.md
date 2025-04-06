@@ -28,6 +28,10 @@ something wrong, their health points are impacted -20points)
 - At the end of the game, each player is evaluated based on what they got wrong
 and given feedback and a personalized lesson. 
 
+For running this program:
+
+pip install -r requirements.txt
+
 For running the .py files:
 
 python gemini_api.py
