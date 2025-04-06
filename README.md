@@ -1,8 +1,6 @@
 Members: John, Faith, Jiya, Mary
 Type: WebApp Game
 
-This is a webApp game.
-
 Game Description: ELearn is an interactive, AI-powered learning web app that 
 makes studying fun through gamification. It uses Gemini AI to generate real-time 
 subject-based questions and delivers a personalized learning experience through 
