@@ -2,6 +2,21 @@ let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 let Mouse = {};
 
+const font1 = new FontFace('KanitBold', 'url(fonts/Kanit-Bold.ttf)');
+
+font1.load().then(function (loadedFont) {
+    document.fonts.add(loadedFont);
+}).catch(function (error) {
+    console.error('Error loading font:', error);
+});
+const font2 = new FontFace('KanitLight', 'url(fonts/Kanit-Light.ttf)');
+
+font2.load().then(function (loadedFont) {
+    document.fonts.add(loadedFont);
+}).catch(function (error) {
+    console.error('Error loading font:', error);
+});
+
 window.onload = function () {
     window.onresize = resizeCanvas;
     resizeCanvas();
@@ -54,7 +69,8 @@ function main() {
 
     if (targetPage == "new game") {
         targetPage = "game";
-        game = new Game(topics, modality);
+        game = new Game(modality);
+        game.requestQuestionGeneration(topics);
     }
     if (targetPage != page) {
         pageTransition++;
@@ -67,13 +83,13 @@ function main() {
         updatePageEffects(targetPage);
         ctx.save();
         var a = easeInOut(pageTransition / 30);
-        if(pageTransitionBackwards) {
+        if (pageTransitionBackwards) {
             ctx.translate(0, canvas.height * a);
         } else {
             ctx.translate(0, -canvas.height * a);
         }
         drawPage(page);
-        if(pageTransitionBackwards) {
+        if (pageTransitionBackwards) {
             ctx.translate(0, -canvas.height);
         } else {
             ctx.translate(0, canvas.height);
@@ -136,6 +152,7 @@ let pageTransition = 0;
 let pageTransitionBackwards = false;
 let modality = false;
 let topics = [];
+let playerNames = [];
 let titlePage = new TitlePage();
 let chooseMultiplayerOrSingleplayerPage = new ChooseMultiplayerOrSingleplayerPage();
 let chooseTopicSingleplayerPage = new ChooseTopicSingleplayerPage();

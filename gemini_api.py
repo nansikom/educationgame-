@@ -5,27 +5,23 @@ import re
 import csv
 import json
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=["null"])
 def generate_response(subject):
     
     prompt = f"""
     
-    Generate 5 questions about {subject}. For each questions as:
+    Generate 5 questions about {subject}. For each of the questions:
     1. Generate 3 choices
-    2. Select the answers from the choices
-    3. Format the response as JSON array of objects:
-        a. "question"
-        b. "choices": {"a", "b", "c"}
-        c. "answers": "a" or "b" or "c"
-    
-    
-    Formatting Example:
+    2. Select the answer from the choices
+    3. Format the response in JSON like this example:
         [
             {{
-            "The question that is generated": {{
-                "choices": ["a", "b", "c"],
-                "answer" : "a" or "b" or "c"
+            "What is 1+1?": {{
+                "choices": ["1", "2", "3"],
+                "answer" : "b"
                 }}
             }}
         ]
@@ -39,7 +35,7 @@ def generate_response(subject):
     model="gemini-2.0-flash", contents= prompt
     )
     print(type(response))
-    return response
+    return (response)
 
     
 # function that corrects the styling format for saving the json file
@@ -91,4 +87,4 @@ def generate():
     except json.JSONDecodeError:
         return jsonify({"error": "Failed to decode JSON response"}), 500
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
