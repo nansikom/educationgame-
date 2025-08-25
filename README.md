@@ -65,8 +65,7 @@ python evaluation.py
 
 ## 🔗 Project Links
 
-- **Devpost Submission**: [Pysch2Learn | Devpost](https://devpost.com/software/pysch2learn)
-
+- **Devpost Submission**: [Pysch2Learn | Devpost](https://devpost.com/software/elearn-6mbn10)
 ## 🚀 Features
 
 - **Real-time AI Question Generation** using Gemini API
