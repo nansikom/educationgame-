@@ -6,7 +6,9 @@ import csv
 import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
+from dotenv import load_dotenv
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
 app = Flask(__name__)
 CORS(app, origins=["null"])
 def generate_response(subject):
@@ -29,7 +31,7 @@ def generate_response(subject):
     Return only json output without explanation.
     """
     
-    client = genai.Client(api_key="------") 
+    client = genai.Client(api_key=api_key) 
 
     response = client.models.generate_content(
     model="gemini-2.0-flash", contents= prompt
