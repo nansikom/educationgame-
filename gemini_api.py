@@ -36,8 +36,6 @@ def generate_response(subject):
     )
     print(type(response))
     return (response)
-
-    
 # function that corrects the styling format for saving the json file
 def strip_json_data(data):
     # remove the the style that starts with backtics and json or backticks as it kills how the file is saved
