@@ -29,7 +29,7 @@ def generate_response(subject):
     Return only json output without explanation.
     """
     
-    client = genai.Client(api_key="AIzaSyDf987k_HpOVlnpddR3-Z4Ybxr8nP5cB0w") 
+    client = genai.Client(api_key="------") 
 
     response = client.models.generate_content(
     model="gemini-2.0-flash", contents= prompt
