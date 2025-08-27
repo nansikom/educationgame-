@@ -1,4 +1,4 @@
 # Ignore the virtual environment
-.env/
+.env
 # Ignore the module files
 .node_modules/
